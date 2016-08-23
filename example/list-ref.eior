@@ -4,4 +4,3 @@
 		(car lst)
 		(list-ref (cdr lst) (- x 1))))])
   (list-ref '(a b c d) 1))
-
