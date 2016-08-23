@@ -1,0 +1,7 @@
+(letrec ([list-ref
+	  (lambda (lst x)
+	    (if (= x 0)
+		(car lst)
+		(list-ref (cdr lst) (- x 1))))])
+  (list-ref '(a b c d) 1))
+

@@ -141,10 +141,10 @@
     (define (loop lst)
       (if (null? lst)
 	  next
-	  (compile (car lst) e s (loop (cdr lst)))))
+	  (my-compile (car lst) e s (loop (cdr lst)))))
     (loop lst)))
 
-(define compile
+(define my-compile
   (lambda (x e s next)
     ;;(debug-line x)
     (cond
@@ -176,14 +176,14 @@
 						`(return ,(length vars))))
 			   ,next)))]
        [if (test then else)
-	   (let ([after-then (compile then e s next)]
-		 [after-else (compile else e s next)])
-	     (compile test e s `(test ,after-then, after-else)))]
+	   (let ([after-then (my-compile then e s next)]
+		 [after-else (my-compile else e s next)])
+	     (my-compile test e s `(test ,after-then, after-else)))]
        [set! (var x) (compile-lookup var e
-				     (lambda (n) (compile x e s `(assign-local ,n ,next)))
-				     (lambda (n) (compile x e s `(assign-free ,n ,next))))]
+				     (lambda (n) (my-compile x e s `(assign-local ,n ,next)))
+				     (lambda (n) (my-compile x e s `(assign-free ,n ,next))))]
        [call/cc (x)
-		(let ((c `(conti (argument ,(compile x e s
+		(let ((c `(conti (argument ,(my-compile x e s
 						     (if (tail? next)
 							 `(shift ,1 ,(cadr next) (apply))
 							 '(apply)))))))
@@ -191,7 +191,7 @@
 		      c
 		      `(frame ,next ,c)))]
        [else
-	(let loop ([args (cdr x)] [c (compile (car x) e s (if (tail? next)
+	(let loop ([args (cdr x)] [c (my-compile (car x) e s (if (tail? next)
 							      `(shift ,(length (cdr x)) ,(cadr next) (apply))
 							      '(apply)))])
 	  (if (null? args)
@@ -199,7 +199,7 @@
 		  c
 		  `(frame ,next ,c))
 	      (loop (cdr args)
-		    (compile (car args)
+		    (my-compile (car args)
 			     e
 			     s
 			     `(argument ,c)))))])]
@@ -301,11 +301,6 @@
 
 (define evaluate
   (lambda (x)
-    (VM '() (compile (pre-compile x) '() '() '(halt)) 0 '() 0)))
+    (VM '() (my-compile (pre-compile `(begin ,@x)) '() '() '(halt)) 0 '() 0)))
 
-(display (evaluate '(letrec ([list-ref
-			      (lambda (lst n)
-				(if (= n 0)
-				    (car lst)
-				    (list-ref (cdr lst) (- n 1))))])
-		      (list-ref '(1 2 3 4) 1))))
+(define eior-eval evaluate)
