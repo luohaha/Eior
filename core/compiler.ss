@@ -301,6 +301,6 @@
 
 (define evaluate
   (lambda (x)
-    (VM '() (my-compile (pre-compile `(begin ,@x)) '() '() '(halt)) 0 '() 0)))
+    (VM '() (my-compile (pre-compile x) '() '() '(halt)) 0 '() 0)))
 
 (define eior-eval evaluate)

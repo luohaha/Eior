@@ -12,4 +12,4 @@
 
 (define eior
   (lambda (filename)
-    (eior-eval (read-file filename))))
+    (eior-eval `(begin ,@(read-file filename)))))
