@@ -7,6 +7,7 @@ A compiler for Eior which is stack-base and just like scheme. This compiler can 
 cd core/
 ./run [filename]
 ```
+>You need chezScheme to run this script!
 
 # stack & register
 
